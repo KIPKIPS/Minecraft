@@ -13,7 +13,7 @@ public class Chunk : MonoBehaviour {
 
     void Start() {
         int vertexIndex = 0;//顶点索引
-        List<Vector3> vertices = new List<Vector3>();//顶点列表
+        List<Vector3> vertices = new List<Vector3>();//顶点列表 
         List<int> triangles = new List<int>();//三角形列表
         List<Vector2> uvs = new List<Vector2>();//uv列表
         for (int i = 0; i < VoxelData.voxelTris.GetLength(0); i++) {
