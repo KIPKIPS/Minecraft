@@ -82,3 +82,26 @@ public static readonly Vector2[] voxelUvs = new Vector2[4] {
 ### 2.Texture Atlas
 ###### 图集索引
 ![avatar](./Tips/image.png)
+###### UV Map
+![avatar](./Tips/uv.png)
+###### UV计算公式:由于UV坐标系原点在左下角,所以blockIndex -> Vector2的公式为
+```csharp
+// textureID
+void AddTexture(int textureID) {
+    //VoxelData.TextureAtlasSizeInBlock 贴图的分割数 4
+    //VoxelData.NormalizedBlockTextureSize 贴图分割数倒数 0.25
+    float y = textureID / VoxelData.TextureAtlasSizeInBlock;
+    float x = textureID - (y * VoxelData.TextureAtlasSizeInBlock);
+    
+    x *= VoxelData.NormalizedBlockTextureSize;
+    y *= VoxelData.NormalizedBlockTextureSize;
+
+    y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+    //这里计算出贴图的起始坐标
+    //按照0 1 2 3的UV索引为uv列表添加数据,下面是一个面片四个顶点的UV坐标值
+    uvs.Add(new Vector2(x,y));
+    uvs.Add(new Vector2(x,y + VoxelData.NormalizedBlockTextureSize));
+    uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,y));
+    uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,y + VoxelData.NormalizedBlockTextureSize));
+}
+```
