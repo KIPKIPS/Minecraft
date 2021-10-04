@@ -23,6 +23,7 @@ public class Chunk : MonoBehaviour {
         CreateMeshData();
         CreateMesh();
     }
+
     //填充体素索引信息
     void PopulateVoxelMap() {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
@@ -64,15 +65,30 @@ public class Chunk : MonoBehaviour {
         for (int i = 0; i < VoxelData.voxelTris.GetLength(0); i++) {
             //pos + VoxelData.faceChecks[i] 得到该面法向量方向的位置,对该位置进行检测,有体素则该面不绘制
             if (!CheckVoxel(pos + VoxelData.faceChecks[i])) {
-                for (int j = 0; j < VoxelData.voxelTris.GetLength(1); j++) {
-                    //存储一个面的两个三角形顶点信息
-                    int triangleIndex = VoxelData.voxelTris[i, j];
-                    vertices.Add(VoxelData.voxelVerts[triangleIndex] + pos);
-
-                    uvs.Add(VoxelData.voxelUvs[j]);
-                    triangles.Add(vertexIndex);
-                    vertexIndex++;
-                }
+                // for (int j = 0; j < VoxelData.voxelTris.GetLength(1); j++) {
+                //     //存储一个面的两个三角形顶点信息
+                //     int triangleIndex = VoxelData.voxelTris[i, j];
+                //     vertices.Add(VoxelData.voxelVerts[triangleIndex] + pos);
+                //
+                //     uvs.Add(VoxelData.voxelUvs[j]);
+                //     triangles.Add(vertexIndex);
+                //     vertexIndex++;
+                // }
+                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 0]] + pos);
+                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 1]] + pos);
+                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 2]] + pos);
+                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 3]] + pos);
+                uvs.Add(VoxelData.voxelUvs[0]);
+                uvs.Add(VoxelData.voxelUvs[1]);
+                uvs.Add(VoxelData.voxelUvs[2]);
+                uvs.Add(VoxelData.voxelUvs[3]);
+                triangles.Add(vertexIndex);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 3);
+                vertexIndex += 4;
             }
         }
     }
