@@ -56,7 +56,6 @@ public class Chunk : MonoBehaviour {
         if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1) {
             return false;
         }
-
         return voxelMap[x, y, z];
     }
 

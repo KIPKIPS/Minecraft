@@ -55,3 +55,27 @@ mesh.RecalculateNormals();//从三角形和顶点重新计算网格的法线
 
 meshFilter.mesh = mesh;
 ```
+###### 优化记录
+* 不可见面片的剔除:
+Chunk内部相邻的体素的相邻面是不可见的,所以可以不绘制,具体方案,对每一个面进行绘制前检测,若该面的法向量方向位置存有相连的体素,跳过绘制
+* 立方体Mesh数据的优化:上述立方体素的每个面包含两个三角形面片,共六个顶点,其中两个顶点是共用的,所以可以进行剔除
+```csharp
+//面片顶点索引数据
+public static readonly int[,] voxelTris = new int[6, 4] {
+    //优化的去除重复数据
+    {0,3,1,2},//back
+    {5,6,4,7},//front
+    {3,7,2,6},//top
+    {1,5,0,4},//bottom
+    {4,7,0,3},//left
+    {1,2,5,6},//right
+};
+//uv
+public static readonly Vector2[] voxelUvs = new Vector2[4] {
+    //优化的去除重复数据
+    new Vector2(0, 0),
+    new Vector2(0, 1),
+    new Vector2(1, 0),
+    new Vector2(1, 1),
+};
+```
