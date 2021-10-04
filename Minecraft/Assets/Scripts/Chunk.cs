@@ -22,7 +22,7 @@ public class Chunk : MonoBehaviour {
                 int triangleIndex = VoxelData.voxelTris[i, j];
                 vertices.Add(VoxelData.voxelVerts[triangleIndex]);
                 
-                uvs.Add(Vector2.zero);
+                uvs.Add(VoxelData.voxelUvs[j]);
                 triangles.Add(vertexIndex);
                 vertexIndex++;
             }
