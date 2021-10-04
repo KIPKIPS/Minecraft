@@ -20,9 +20,9 @@ public class Chunk : MonoBehaviour {
         Vector3 tempPos = new Vector3(0,0,0);
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
-                for (int z = 0; x < VoxelData.ChunkWidth; z++) {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++) {
                     tempPos.x = x;
-                    tempPos.y= y;
+                    tempPos.y = y;
                     tempPos.z = z;
                     AddVoxelDataToChunk(tempPos);
                 }
