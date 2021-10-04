@@ -79,3 +79,6 @@ public static readonly Vector2[] voxelUvs = new Vector2[4] {
     new Vector2(1, 1),
 };
 ```
+### 2.Texture Atlas
+###### 图集索引
+![avatar](./Tips/image.png)

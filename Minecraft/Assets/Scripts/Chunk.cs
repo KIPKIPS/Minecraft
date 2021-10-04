@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class Chunk : MonoBehaviour {
     public MeshRenderer meshRenderer; //网格渲染器
@@ -11,11 +12,12 @@ public class Chunk : MonoBehaviour {
     List<int> triangles = new List<int>(); //三角形列表
     List<Vector2> uvs = new List<Vector2>(); //uv列表
 
-    bool[,,] voxelMap = new bool[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
-
+    byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public World world;
     void Awake() {
         meshRenderer = GetComponent<MeshRenderer>();
         meshFilter = GetComponent<MeshFilter>();
+        world = GameObject.FindObjectOfType<World>();
     }
 
     void Start() {
@@ -29,7 +31,7 @@ public class Chunk : MonoBehaviour {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++) {
-                    voxelMap[x, y, z] = true;
+                    voxelMap[x, y, z] = 0;
                 }
             }
         }
@@ -56,7 +58,7 @@ public class Chunk : MonoBehaviour {
         if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1) {
             return false;
         }
-        return voxelMap[x, y, z];
+        return world.blockTypes[voxelMap[x, y, z]].isSolid;
     }
 
     //为chunk块设置体素数据,pos指定的渲染位置
@@ -64,29 +66,18 @@ public class Chunk : MonoBehaviour {
         for (int i = 0; i < VoxelData.voxelTris.GetLength(0); i++) {
             //pos + VoxelData.faceChecks[i] 得到该面法向量方向的位置,对该位置进行检测,有体素则该面不绘制
             if (!CheckVoxel(pos + VoxelData.faceChecks[i])) {
-                // for (int j = 0; j < VoxelData.voxelTris.GetLength(1); j++) {
-                //     //存储一个面的两个三角形顶点信息
-                //     int triangleIndex = VoxelData.voxelTris[i, j];
-                //     vertices.Add(VoxelData.voxelVerts[triangleIndex] + pos);
-                //
-                //     uvs.Add(VoxelData.voxelUvs[j]);
-                //     triangles.Add(vertexIndex);
-                //     vertexIndex++;
-                // }
-                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 0]] + pos);
-                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 1]] + pos);
-                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 2]] + pos);
-                vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, 3]] + pos);
-                uvs.Add(VoxelData.voxelUvs[0]);
-                uvs.Add(VoxelData.voxelUvs[1]);
-                uvs.Add(VoxelData.voxelUvs[2]);
-                uvs.Add(VoxelData.voxelUvs[3]);
+                for (int j = 0; j < VoxelData.voxelTris.GetLength(1); j++) {
+                    //存储一个面的两个三角形顶点信息
+                    vertices.Add(VoxelData.voxelVerts[VoxelData.voxelTris[i, j]] + pos);
+                    // uvs.Add(VoxelData.voxelUvs[j]);
+                }
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
                 triangles.Add(vertexIndex + 2);
                 triangles.Add(vertexIndex + 2);
                 triangles.Add(vertexIndex + 1);
                 triangles.Add(vertexIndex + 3);
+                AddTexture(0);
                 vertexIndex += 4;
             }
         }
@@ -100,5 +91,19 @@ public class Chunk : MonoBehaviour {
         mesh.RecalculateNormals(); //从三角形和顶点重新计算网格的法线
 
         meshFilter.mesh = mesh;
+    }
+
+    void AddTexture(int textureID) {
+        float y = textureID / VoxelData.TextureAtlasSizeInBlock;
+        float x = textureID - (y * VoxelData.TextureAtlasSizeInBlock);
+        
+        x *= VoxelData.NormalizedBlockTextureSize;
+        y *= VoxelData.NormalizedBlockTextureSize;
+
+        y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+        uvs.Add(new Vector2(x,y));
+        uvs.Add(new Vector2(x,y + VoxelData.NormalizedBlockTextureSize));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,y));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,y + VoxelData.NormalizedBlockTextureSize));
     }
 }
