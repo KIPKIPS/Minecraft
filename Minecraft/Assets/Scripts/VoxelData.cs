@@ -16,6 +16,15 @@ public static class VoxelData {
         new Vector3(1f, 1f, 1f),
         new Vector3(0f, 1f, 1f),
     };
+    public static readonly Vector3[] faceChecks = new Vector3[6] {
+        new Vector3(0f, 0f, -1f),//back
+        new Vector3(0f, 0f, 1f),//front
+        new Vector3(0f, 1f, 0f),//top
+        new Vector3(0f, -1f, 0f),//bottom
+        new Vector3(-1f, 0f, 0f),//left
+        new Vector3(1f, 0f, 0f),//right
+    };
+    
     //存储三角形面片的数据
     public static readonly int[,] voxelTris = new int[6, 6] {
         {0,3,1,1,3,2},//back
@@ -25,6 +34,7 @@ public static class VoxelData {
         {4,7,0,0,7,3},//left
         {1,2,5,5,2,6},//right
     };
+    
     //uv
     public static readonly Vector2[] voxelUvs = new Vector2[6] {
         new Vector2(0, 0),
