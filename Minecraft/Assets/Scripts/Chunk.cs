@@ -36,7 +36,8 @@ public class Chunk {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++) {
-                    voxelMap[x, y, z] = world.GetVoxel(new Vector3(x, y, z));
+                    //获取相对世界的体素块,需要加上chunk的相对位置position
+                    voxelMap[x, y, z] = world.GetVoxel(new Vector3(x, y, z) + position);
                 }
             }
         }
@@ -75,13 +76,14 @@ public class Chunk {
         }
     }
 
-    //检测pos处是否有voxel
+    //检测voxel是否绘制该面
     bool CheckVoxel(Vector3 pos) {
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
         //体素块不在chunk内
         if (!IsVoxelInChunk(x, y, z)) {
+            //该体素位于相邻的chunk内,若是solid表示相邻的chunk内存在voxel相邻,也不进行绘制
             return world.blockTypes[world.GetVoxel(pos + position)].isSolid;
         } else {
             return world.blockTypes[voxelMap[x, y, z]].isSolid;

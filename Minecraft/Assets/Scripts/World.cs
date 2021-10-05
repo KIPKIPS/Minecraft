@@ -1,28 +1,58 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class World : MonoBehaviour {
+    public Transform player;
+    public Vector3 spawnPosition;
     public Material material;
     public BlockType[] blockTypes;
     private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeChunks, VoxelData.WorldSizeChunks];
 
     void Start() {
+        spawnPosition = new Vector3(VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f, VoxelData.ChunkHeight + 2, VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f);
         GenerateWorld();
     }
 
+    void Update() {
+        CheckViewDistance();
+    }
+
     public void GenerateWorld() {
-        for (int x = 0; x < VoxelData.WorldSizeChunks; x++) {
-            for (int z = 0; z < VoxelData.WorldSizeChunks; z++) {
-                CeateNewChunk(x, z);
+        for (int x = VoxelData.WorldSizeChunks / 2 - VoxelData.ViewDistanceInChunks; x < VoxelData.WorldSizeChunks / 2 + VoxelData.ViewDistanceInChunks; x++) {
+            for (int z = VoxelData.WorldSizeChunks / 2 - VoxelData.ViewDistanceInChunks; z < VoxelData.WorldSizeChunks / 2 + VoxelData.ViewDistanceInChunks; z++) {
+                CreateNewChunk(x, z);
+            }
+        }
+
+        //将玩家置于地图中心位置
+        player.position = spawnPosition;
+    }
+
+    ChunkCoord GetChunkCoordFromVector3(Vector3 pos) {
+        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
+        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
+        return new ChunkCoord(x, z);
+    }
+    void CheckViewDistance() {
+        ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        for (int x = coord.x - VoxelData.ViewDistanceInChunks; x < coord.x + VoxelData.ViewDistanceInChunks; x++) {
+            for (int z = coord.z - VoxelData.ViewDistanceInChunks; z < coord.z + VoxelData.ViewDistanceInChunks; z++) {
+                if (isChunkInWorld(new ChunkCoord(x,z))) {
+                    if (chunks[x,z] == null) {
+                        CreateNewChunk(x,z);
+                    }
+                }
             }
         }
     }
+
     //创建chunk
-    void CeateNewChunk(int x, int z) {
+    void CreateNewChunk(int x, int z) {
         chunks[x, z] = new Chunk(new ChunkCoord(x, z), this);
     }
-    
+
     //chunk是否在世界中
     bool isChunkInWorld(ChunkCoord coord) {
         if (coord.x > 0 && coord.x < VoxelData.WorldSizeChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeChunks - 1) {
@@ -45,6 +75,7 @@ public class World : MonoBehaviour {
         if (!IsVoxelInWorld(pos)) {
             return 4;
         }
+
         //底层
         if (pos.y < 1) {
             return 0;
