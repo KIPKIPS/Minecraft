@@ -5,7 +5,17 @@ using UnityEngine;
 public class World : MonoBehaviour {
     public Material material;
     public BlockType[] blockTypes;
+
+    void Start() {
+        Chunk chunk1 = new Chunk(new ChunkCoord(0,0),this);
+        Chunk chunk2 = new Chunk(new ChunkCoord(1,0),this);
+    }
+
+    public void GenerateWorld() {
+        
+    }
 }
+
 
 [System.Serializable]
 public class BlockType {

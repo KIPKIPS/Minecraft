@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = System.Random;
 
-public class Chunk : MonoBehaviour {
-    public MeshRenderer meshRenderer; //网格渲染器
-    public MeshFilter meshFilter; //网格过滤器
+public class Chunk {
+    public ChunkCoord coord;
+    GameObject chunkObject;
+    MeshRenderer meshRenderer; //网格渲染器
+    MeshFilter meshFilter; //网格过滤器
 
     int vertexIndex = 0; //顶点索引
     List<Vector3> vertices = new List<Vector3>(); //顶点列表 
@@ -15,17 +16,21 @@ public class Chunk : MonoBehaviour {
     byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
     public World world;
 
-    void Awake() {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshFilter = GetComponent<MeshFilter>();
-        world = GameObject.FindObjectOfType<World>();
-    }
-
-    void Start() {
+    public Chunk(ChunkCoord _coord, World _world) {
+        chunkObject = new GameObject();
+        coord = _coord;
+        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        meshFilter = chunkObject.AddComponent<MeshFilter>();
+        world = _world;
+        meshRenderer.material = world.material;
+        chunkObject.transform.SetParent(world.transform);
+        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0, coord.z * VoxelData.ChunkWidth);
+        chunkObject.name = "Chunk" + coord.x + "," + coord.z;
         PopulateVoxelMap();
         CreateMeshData();
         CreateMesh();
     }
+
 
     //填充体素类型,0 grass草地,1 bedrock,2 stone岩石
     void PopulateVoxelMap() {
@@ -35,7 +40,7 @@ public class Chunk : MonoBehaviour {
                     if (y < 1) {
                         voxelMap[x, y, z] = 0;
                     } else if (y == VoxelData.ChunkHeight - 1) {
-                        voxelMap[x, y, z] = 3;
+                        voxelMap[x, y, z] = 4;
                     } else {
                         voxelMap[x, y, z] = 1;
                     }
@@ -117,5 +122,16 @@ public class Chunk : MonoBehaviour {
         uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+    }
+}
+
+//块坐标
+public class ChunkCoord {
+    public int x;
+    public int z;
+
+    public ChunkCoord(int _x, int _z) {
+        x = _x;
+        z = _z;
     }
 }
