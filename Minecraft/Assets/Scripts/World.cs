@@ -9,14 +9,21 @@ public class World : MonoBehaviour {
     public Material material;
     public BlockType[] blockTypes;
     private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeChunks, VoxelData.WorldSizeChunks];
+    private List<ChunkCoord> activeChunks = new List<ChunkCoord>();
 
+    private ChunkCoord playerLastChunkCoord;
+    private ChunkCoord playerChunkCoord;
     void Start() {
         spawnPosition = new Vector3(VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f, VoxelData.ChunkHeight + 2, VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f);
         GenerateWorld();
+        playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
     }
 
     void Update() {
-        CheckViewDistance();
+        playerChunkCoord = GetChunkCoordFromVector3(player.position);
+        if (!playerChunkCoord.Equals(playerLastChunkCoord)) {
+            CheckViewDistance();
+        }
     }
 
     public void GenerateWorld() {
@@ -37,20 +44,42 @@ public class World : MonoBehaviour {
     }
     void CheckViewDistance() {
         ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        print("do check view distance");
+        playerLastChunkCoord = coord;
+        List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);//复制激活的列表
+        ChunkCoord tempChunkCoord = new ChunkCoord(0, 0);
         for (int x = coord.x - VoxelData.ViewDistanceInChunks; x < coord.x + VoxelData.ViewDistanceInChunks; x++) {
             for (int z = coord.z - VoxelData.ViewDistanceInChunks; z < coord.z + VoxelData.ViewDistanceInChunks; z++) {
                 if (isChunkInWorld(new ChunkCoord(x,z))) {
                     if (chunks[x,z] == null) {
                         CreateNewChunk(x,z);
+                    }else if (!chunks[x, z].isActive) {
+                        chunks[x, z].isActive = true;
+                        //已经创建过的但是设为未激活的chunk重新添加大激活列表中
+                        activeChunks.Add(new ChunkCoord(x,z));
+                    }
+                }
+
+                for (int i = 0; i < previouslyActiveChunks.Count; i++) {
+                    tempChunkCoord.x = x;
+                    tempChunkCoord.z = z;
+                    if (previouslyActiveChunks[i].Equals(tempChunkCoord)) {
+                        previouslyActiveChunks.RemoveAt(i);
                     }
                 }
             }
+        }
+
+        foreach (ChunkCoord c in previouslyActiveChunks) {
+            chunks[c.x, c.z].isActive = false;
         }
     }
 
     //创建chunk
     void CreateNewChunk(int x, int z) {
         chunks[x, z] = new Chunk(new ChunkCoord(x, z), this);
+        //创建的时候添加到激活列表中
+        activeChunks.Add(new ChunkCoord(x,z));
     }
 
     //chunk是否在世界中
