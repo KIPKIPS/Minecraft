@@ -5,17 +5,54 @@ using UnityEngine;
 public class World : MonoBehaviour {
     public Material material;
     public BlockType[] blockTypes;
+    private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeChunks, VoxelData.WorldSizeChunks];
 
     void Start() {
-        Chunk chunk1 = new Chunk(new ChunkCoord(0,0),this);
-        Chunk chunk2 = new Chunk(new ChunkCoord(1,0),this);
+        GenerateWorld();
     }
 
     public void GenerateWorld() {
-        
+        for (int x = 0; x < VoxelData.WorldSizeChunks; x++) {
+            for (int z = 0; z < VoxelData.WorldSizeChunks; z++) {
+                CeateNewChunk(x, z);
+            }
+        }
+    }
+    //创建chunk
+    void CeateNewChunk(int x, int z) {
+        chunks[x, z] = new Chunk(new ChunkCoord(x, z), this);
+    }
+    
+    //chunk是否在世界中
+    bool isChunkInWorld(ChunkCoord coord) {
+        if (coord.x > 0 && coord.x < VoxelData.WorldSizeChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeChunks - 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    bool IsVoxelInWorld(Vector3  pos) {
+        if (pos.x > 0 && pos.x < VoxelData.WorldSizeInVoxels - 1 && pos.z > 0 && pos.y > 0 && pos.y < VoxelData.ChunkHeight - 1 && pos.z < VoxelData.WorldSizeInVoxels - 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public byte GetVoxel(Vector3 pos) {
+        //底层
+        if (pos.y < 1) {
+            return 0;
+        } else if (pos.y == VoxelData.ChunkHeight - 1) {
+            //表层
+            return 2; //草地
+        } else {
+            //中间层
+            return 1;
+        }
     }
 }
-
 
 [System.Serializable]
 public class BlockType {
@@ -38,7 +75,7 @@ public class BlockType {
             case 3: return bottomFaceTexture;
             case 4: return leftFaceTexture;
             case 5: return backFaceTexture;
-            default: 
+            default:
                 Debug.Log("Error in GetTextureID,invalid face index");
                 return -1;
         }

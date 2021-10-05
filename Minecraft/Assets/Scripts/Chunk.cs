@@ -31,24 +31,18 @@ public class Chunk {
         CreateMesh();
     }
 
-
     //填充体素类型,0 grass草地,1 bedrock,2 stone岩石
     void PopulateVoxelMap() {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++) {
-                    if (y < 1) {
-                        voxelMap[x, y, z] = 0;
-                    } else if (y == VoxelData.ChunkHeight - 1) {
-                        voxelMap[x, y, z] = 4;
-                    } else {
-                        voxelMap[x, y, z] = 1;
-                    }
+                    voxelMap[x, y, z] = world.GetVoxel(new Vector3(x, y, z));
                 }
             }
         }
     }
 
+    //创建mesh所需要的数据
     void CreateMeshData() {
         Vector3 tempPos = new Vector3(0, 0, 0);
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
@@ -63,12 +57,30 @@ public class Chunk {
         }
     }
 
+    public bool isActive {
+        get{ return chunkObject.activeSelf; }
+        set{ chunkObject.SetActive(value); }
+    }
+
+    public Vector3 position {
+        get{ return chunkObject.transform.position; }
+    }
+
+    //voxel是否在chunk中
+    bool IsVoxelInChunk(int x, int y, int z) {
+        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //检测pos处是否有voxel
     bool CheckVoxel(Vector3 pos) {
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
-        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 ||
-            z > VoxelData.ChunkWidth - 1) {
+        if (!IsVoxelInChunk(x, y, z)) {
             return false;
         }
 
@@ -99,6 +111,7 @@ public class Chunk {
         }
     }
 
+    // 创建Mesh
     void CreateMesh() {
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -109,6 +122,7 @@ public class Chunk {
         meshFilter.mesh = mesh;
     }
 
+    // 为mesh添加贴图
     void AddTexture(int textureID) {
         float y = textureID / VoxelData.TextureAtlasSizeInBlock;
         float x = textureID - (y * VoxelData.TextureAtlasSizeInBlock);
