@@ -32,8 +32,8 @@ public class World : MonoBehaviour {
         }
     }
 
-    bool IsVoxelInWorld(Vector3  pos) {
-        if (pos.x > 0 && pos.x < VoxelData.WorldSizeInVoxels - 1 && pos.z > 0 && pos.y > 0 && pos.y < VoxelData.ChunkHeight - 1 && pos.z < VoxelData.WorldSizeInVoxels - 1) {
+    bool IsVoxelInWorld(Vector3 pos) {
+        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels) {
             return true;
         } else {
             return false;
@@ -41,6 +41,10 @@ public class World : MonoBehaviour {
     }
 
     public byte GetVoxel(Vector3 pos) {
+        //air
+        if (!IsVoxelInWorld(pos)) {
+            return 4;
+        }
         //底层
         if (pos.y < 1) {
             return 0;

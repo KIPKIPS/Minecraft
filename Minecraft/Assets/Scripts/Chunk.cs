@@ -80,11 +80,12 @@ public class Chunk {
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
+        //体素块不在chunk内
         if (!IsVoxelInChunk(x, y, z)) {
-            return false;
+            return world.blockTypes[world.GetVoxel(pos + position)].isSolid;
+        } else {
+            return world.blockTypes[voxelMap[x, y, z]].isSolid;
         }
-
-        return world.blockTypes[voxelMap[x, y, z]].isSolid;
     }
 
     //为chunk块设置体素数据,pos指定的渲染位置
