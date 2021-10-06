@@ -113,7 +113,7 @@ public class World : MonoBehaviour {
         }
 
         int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerlin(new Vector2(pos.x,pos.z),500,0.25f));
-        print((terrainHeight));
+        // print((terrainHeight));
         if (yPos == terrainHeight) {
             return 3;//grass
         }  else if (yPos > terrainHeight) {

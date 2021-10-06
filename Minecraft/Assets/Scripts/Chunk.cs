@@ -31,7 +31,7 @@ public class Chunk {
         CreateMesh();
     }
 
-    //填充体素类型,0 grass草地,1 bedrock,2 stone岩石
+    //填充体素类型
     void PopulateVoxelMap() {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
