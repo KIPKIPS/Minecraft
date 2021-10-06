@@ -51,7 +51,7 @@ public class World : MonoBehaviour {
         print("do check view distance");
         playerLastChunkCoord = coord;
         List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);//复制激活的列表
-        ChunkCoord tempChunkCoord = new ChunkCoord(0, 0);
+        // ChunkCoord tempChunkCoord = new ChunkCoord(0, 0);
         for (int x = coord.x - VoxelData.ViewDistanceInChunks; x < coord.x + VoxelData.ViewDistanceInChunks; x++) {
             for (int z = coord.z - VoxelData.ViewDistanceInChunks; z < coord.z + VoxelData.ViewDistanceInChunks; z++) {
                 if (isChunkInWorld(new ChunkCoord(x,z))) {
@@ -65,9 +65,7 @@ public class World : MonoBehaviour {
                 }
 
                 for (int i = 0; i < previouslyActiveChunks.Count; i++) {
-                    tempChunkCoord.x = x;
-                    tempChunkCoord.z = z;
-                    if (previouslyActiveChunks[i].Equals(tempChunkCoord)) {
+                    if (previouslyActiveChunks[i].Equals(new ChunkCoord(x, z))) {
                         previouslyActiveChunks.RemoveAt(i);
                     }
                 }
@@ -114,11 +112,14 @@ public class World : MonoBehaviour {
             return 1;
         }
 
-        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerlin(new Vector2(pos.x,pos.z),0,0.25f));
-        if (yPos <= terrainHeight) {
-            return 2;//石头
-        } else {
+        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerlin(new Vector2(pos.x,pos.z),500,0.25f));
+        print((terrainHeight));
+        if (yPos == terrainHeight) {
+            return 3;//grass
+        }  else if (yPos > terrainHeight) {
             return 0;
+        } else {
+            return 2;//grass
         }
     }
 }

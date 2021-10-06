@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class VoxelData {
-    public static readonly int ChunkWidth = 5; //块宽,voxel个数
-    public static readonly int ChunkHeight = 15; //块高,voxel个数
-    public static readonly int WorldSizeChunks = 100;
+    public static readonly int ChunkWidth = 16; //块宽,voxel个数
+    public static readonly int ChunkHeight = 128; //块高,voxel个数
+    public static readonly int WorldSizeChunks = 10;
     
     public static readonly int TextureAtlasSizeInBlock = 4;
     public static readonly int ViewDistanceInChunks = 5;

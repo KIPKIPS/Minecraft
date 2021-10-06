@@ -45,15 +45,11 @@ public class Chunk {
 
     //创建mesh所需要的数据
     void CreateMeshData() {
-        Vector3 tempPos = new Vector3(0, 0, 0);
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++) {
                     if (world.blockTypes[voxelMap[x,y,z]].isSolid) {
-                        tempPos.x = x;
-                        tempPos.y = y;
-                        tempPos.z = z;
-                        AddVoxelDataToChunk(tempPos);
+                        AddVoxelDataToChunk(new Vector3(x,y,z));
                     }
                 }
             }
