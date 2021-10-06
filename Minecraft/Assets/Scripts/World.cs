@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class World : MonoBehaviour {
+    public int seed;
+    
     public Transform player;
     public Vector3 spawnPosition;
     public Material material;
@@ -14,6 +17,7 @@ public class World : MonoBehaviour {
     private ChunkCoord playerLastChunkCoord;
     private ChunkCoord playerChunkCoord;
     void Start() {
+        Random.InitState(seed);
         spawnPosition = new Vector3(VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f, VoxelData.ChunkHeight + 2, VoxelData.WorldSizeChunks * VoxelData.ChunkWidth / 2f);
         GenerateWorld();
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
@@ -100,20 +104,21 @@ public class World : MonoBehaviour {
     }
 
     public byte GetVoxel(Vector3 pos) {
-        //air
+        int yPos = Mathf.FloorToInt(pos.y);
+        //世界之外air
         if (!IsVoxelInWorld(pos)) {
-            return 4;
+            return 0;
+        }
+        // 地层为基岩
+        if (yPos == 0) {
+            return 1;
         }
 
-        //底层
-        if (pos.y < 1) {
-            return 0;
-        } else if (pos.y == VoxelData.ChunkHeight - 1) {
-            //表层
-            return 2; //草地
+        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerlin(new Vector2(pos.x,pos.z),0,0.25f));
+        if (yPos <= terrainHeight) {
+            return 2;//石头
         } else {
-            //中间层
-            return 1;
+            return 0;
         }
     }
 }

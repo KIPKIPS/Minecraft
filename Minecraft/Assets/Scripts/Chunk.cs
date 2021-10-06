@@ -49,10 +49,12 @@ public class Chunk {
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
             for (int x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++) {
-                    tempPos.x = x;
-                    tempPos.y = y;
-                    tempPos.z = z;
-                    AddVoxelDataToChunk(tempPos);
+                    if (world.blockTypes[voxelMap[x,y,z]].isSolid) {
+                        tempPos.x = x;
+                        tempPos.y = y;
+                        tempPos.z = z;
+                        AddVoxelDataToChunk(tempPos);
+                    }
                 }
             }
         }

@@ -327,17 +327,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbd30dfda21b884409f75895b2aa029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 2147483647
   player: {fileID: 963194228}
+  spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: 81fcd6cb078460f4eb307f1216bc2b78, type: 2}
   blockTypes:
+  - blockName: Air
+    isSolid: 0
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
   - blockName: Bedrock
     isSolid: 1
-    backFaceTexture: 9
-    frontFaceTexture: 9
-    topFaceTexture: 9
-    bottomFaceTexture: 9
-    leftFaceTexture: 9
-    rightFaceTexture: 9
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
   - blockName: Stone
     isSolid: 1
     backFaceTexture: 0
@@ -354,22 +364,14 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 2
     rightFaceTexture: 2
-  - blockName: Furnace
+  - blockName: Sand
     isSolid: 1
-    backFaceTexture: 13
-    frontFaceTexture: 12
-    topFaceTexture: 15
-    bottomFaceTexture: 15
-    leftFaceTexture: 13
-    rightFaceTexture: 13
-  - blockName: Air
-    isSolid: 0
-    backFaceTexture: 0
-    frontFaceTexture: 0
-    topFaceTexture: 0
-    bottomFaceTexture: 0
-    leftFaceTexture: 0
-    rightFaceTexture: 0
+    backFaceTexture: 10
+    frontFaceTexture: 10
+    topFaceTexture: 10
+    bottomFaceTexture: 10
+    leftFaceTexture: 10
+    rightFaceTexture: 10
 --- !u!4 &1062149935
 Transform:
   m_ObjectHideFlags: 0
